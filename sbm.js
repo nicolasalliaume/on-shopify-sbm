@@ -13,9 +13,14 @@ module.exports = async function() {
 
 	switch ( action ) {
 
-		case 'branch': return require( './commands/branch' )( command );
+		case 'branch':
+		case 'flow': 
+			return require( './commands/branch' )( command );
 
-		case 'set': return require( './commands/set' )( command );
+		case 'set': 
+		case 'set-branch':
+		case 'set-theme':
+			return require( './commands/set' )( command );
 
 		default: throw new Error( `Unknown command ${ action }`.red );
 
