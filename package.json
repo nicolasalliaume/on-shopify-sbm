@@ -1,0 +1,31 @@
+{
+  "name": "on-shopify-sbm",
+  "version": "1.0.0",
+  "description": "ON Lab's successful branching model for Shopify",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicolasalliaume/on-shopify-sbm.git"
+  },
+  "bin": {
+    "shopify-sbm": "./index.js"
+  },
+  "keywords": [
+    "shopify",
+    "sbm",
+    "git",
+    "development",
+    "tools"
+  ],
+  "author": "Nicolás Alliaume <nicolas@on-lab.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nicolasalliaume/on-shopify-sbm/issues"
+  },
+  "homepage": "https://github.com/nicolasalliaume/on-shopify-sbm#readme",
+  "dependencies": {
+    "current-git-branch": "^1.1.0",
+    "on-shopify-utils": "https://github.com/nicolasalliaume/on-shopify-utils"
+  }
+}
