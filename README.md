@@ -1,4 +1,4 @@
-# Shopify CLI Utility ( "The Wordpress CLI for Shopify" )
+# Shopify SBM
 
 [![Developed by ON Lab](http://on-lab.com/developed-by-on-lab.svg?v=3)](http://on-lab.com)
 
