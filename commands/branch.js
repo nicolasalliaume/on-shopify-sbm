@@ -1,4 +1,5 @@
 const createGitBranch = require( '../utils/create-git-branch' );
+const checkoutGitBranch = require( '../utils/checkout-git-branch' );
 const duplicateTheme = require( '../utils/duplicate-theme' );
 const getMatchingTheme = require( '../utils/get-matching-theme' );
 
@@ -17,6 +18,10 @@ module.exports = async function( command ) {
 		);
 	}
 
+	!command.silent && console.log( `Checking out ${ 'dev'.green } branch...` );
+
+	await checkoutGitBranch( 'dev' );
+
 	!command.silent && console.log(
 		`Creating Shopify theme ${ branchName.bold.green } `
 		+ `as a copy of ${ devTheme.name }...`
@@ -30,7 +35,7 @@ module.exports = async function( command ) {
 		`Creating git branch ${ branchName.bold.green }...`
 	);
 
-	createGitBranch( branchName );
+	await createGitBranch( branchName );
 
 	!command.silent && console.log(
 		`✅  Created git branch ${ branchName.bold }`.green
