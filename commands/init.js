@@ -7,8 +7,8 @@ const getMatchingTheme = require( '../utils/get-matching-theme' );
 module.exports = async function( command ) {
 	!command.silent && console.log( `Creating SBM env file for store...` );
 
-	const envContent = getEnvContent( command );
-	fs.writeFileSync( './.env.sbm', envContent, 'utf8' );
+	const sbmEnvFileContent = getSbmEnvContent( command );
+	fs.writeFileSync( './.env.sbm', sbmEnvFileContent, 'utf8' );
 
 	!command.silent && console.log( `SBM env file created.` );
 	!command.silent && console.log( `Duplicating ${ 'master'.green } theme on shop...` );
@@ -25,6 +25,12 @@ module.exports = async function( command ) {
 	const devTheme = await duplicateTheme( masterTheme.id, 'dev' );
 	
 	!command.silent && console.log( `Theme ${ devTheme.name.green } created.` );
+	!command.silent && console.log( `Updating Slate env variables...` );
+
+	const envContent = getEnvContent( command, devTheme );
+	fs.writeFileSync( './.env', envContent, 'utf8' );
+
+	!command.silent && console.log( `Slate env variables updated.` );
 	!command.silent && console.log( `Creating branch ${ 'dev'.green }...` );
 
 	createGitBranch( 'dev' );
@@ -34,7 +40,20 @@ module.exports = async function( command ) {
 }
 
 
-function getEnvContent( command ) {
+function getSbmEnvContent( command ) {
+	const { domain, apiKey, password } = getAuthFromCommand( command );
+	return `DOMAIN=${ domain }\nKEY=${ apiKey }\nPASSWORD=${ password }\n`;
+}
+
+
+function getEnvContent( command, devTheme ) {
+	const { domain, apiKey, password } = getAuthFromCommand( command );
+	return `SLATE_STORE=${ domain }\n\nSLATE_PASSWORD=${ password }\n\n`
+		+ `SLATE_THEME_ID=${ devTheme.id }\n\nSLATE_IGNORE_FILES=config/settings_data.json`;
+}
+
+
+function getAuthFromCommand( command ) {
 	const domain = command.d || command.domain;
 	const apiKey = command.k || command.key || command.apiKey;
 	const password = command.p || command.password;
@@ -46,5 +65,5 @@ function getEnvContent( command ) {
 		);
 	}
 
-	return `DOMAIN=${ domain }\nKEY=${ apiKey }\nPASSWORD=${ password }\n`;
+	return { domain, apiKey, password };
 }
