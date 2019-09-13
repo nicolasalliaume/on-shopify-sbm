@@ -1,8 +1,5 @@
 const fs = require( 'fs' );
 const createGitBranch = require( '../utils/create-git-branch' );
-const duplicateTheme = require( '../utils/duplicate-theme' );
-const getMatchingTheme = require( '../utils/get-matching-theme' );
-
 
 module.exports = async function( command ) {
 	!command.silent && console.log( `Creating SBM env file for store...` );
@@ -11,7 +8,14 @@ module.exports = async function( command ) {
 	fs.writeFileSync( './.env.sbm', sbmEnvFileContent, 'utf8' );
 
 	!command.silent && console.log( `SBM env file created.` );
+
+	// load new env variables
+	require( 'dotenv' ).config( { path: './.env.sbm' } );
+
 	!command.silent && console.log( `Duplicating ${ 'master'.green } theme on shop...` );
+
+	const duplicateTheme = require( '../utils/duplicate-theme' );
+	const getMatchingTheme = require( '../utils/get-matching-theme' );
 
 	const masterTheme = await getMatchingTheme( 'master' );
 	if ( ! masterTheme ) {
