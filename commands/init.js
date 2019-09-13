@@ -11,24 +11,32 @@ module.exports = async function( command ) {
 
 	// load new env variables
 	require( 'dotenv' ).config( { path: './.env.sbm' } );
-
-	!command.silent && console.log( `Duplicating ${ 'master'.green } theme on shop...` );
-
-	const duplicateTheme = require( '../utils/duplicate-theme' );
+	
 	const getMatchingTheme = require( '../utils/get-matching-theme' );
 
-	const masterTheme = await getMatchingTheme( 'master' );
-	if ( ! masterTheme ) {
-		throw new Error( 
-			`No theme "master" was found in the store.`.red
-			+ `\n👉 A theme called "master" is needed to use as base theme `.blue
-			+ `when initializing Shopify SBM.`.blue 
-		);
+	let devTheme = await getMatchingTheme( 'dev' );
+	if ( devTheme ) {
+		!command.silent && console.log( `Theme ${ 'dev'.green } already exists on store.` );
+	}
+	else {
+		!command.silent && console.log( `Duplicating ${ 'master'.green } theme on shop...` );
+
+		const duplicateTheme = require( '../utils/duplicate-theme' );
+
+		const masterTheme = await getMatchingTheme( 'master' );
+		if ( ! masterTheme ) {
+			throw new Error( 
+				`No theme "master" was found in the store.`.red
+				+ `\n👉 A theme called "master" is needed to use as base theme `.blue
+				+ `when initializing Shopify SBM.`.blue 
+			);
+		}
+
+		devTheme = await duplicateTheme( masterTheme.id, 'dev' );
+		
+		!command.silent && console.log( `Theme ${ devTheme.name.green } created.` );
 	}
 
-	const devTheme = await duplicateTheme( masterTheme.id, 'dev' );
-	
-	!command.silent && console.log( `Theme ${ devTheme.name.green } created.` );
 	!command.silent && console.log( `Updating Slate env variables...` );
 
 	const envContent = getEnvContent( command, devTheme );
@@ -37,9 +45,17 @@ module.exports = async function( command ) {
 	!command.silent && console.log( `Slate env variables updated.` );
 	!command.silent && console.log( `Creating branch ${ 'dev'.green }...` );
 
-	createGitBranch( 'dev' );
+	try {
+		await createGitBranch( 'dev' );
+		!command.silent && console.log( `Branch ${ 'dev'.green } created.` );
+	}
+	catch ( e ) {
+		console.log( 
+			`Error while creating dev branch: ${ e.message.red }. `
+			+ `Dismiss this error if branch already exists.` 
+		);
+	}
 
-	!command.silent && console.log( `Branch ${ 'dev'.green } created.` );
 	!command.silent && console.log( `✅  Shopify SBM initialized.`.green );
 }
 
