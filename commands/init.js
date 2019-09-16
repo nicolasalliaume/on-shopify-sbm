@@ -9,12 +9,12 @@ module.exports = async function( command ) {
 	// load new env variables
 	require( 'dotenv' ).config( { path: './.env.sbm' } );
 
-	const masterTheme = await createMasterThemeIfNeeded();
-	const devTheme = await createDevThemeIfNeeded();
+	const masterTheme = await createMasterThemeIfNeeded( command );
+	const devTheme = await createDevThemeIfNeeded( command );
 
 	createSlateEnvFile( command, devTheme.id );
 
-	createAndCheckoutDevBranch( command );
+	await createAndCheckoutDevBranch( command );
 	
 	!command.silent && console.log( `✅  Shopify SBM initialized.`.green );
 }
@@ -35,22 +35,26 @@ function createSlateEnvFile( command, devThemeId ) {
 	!command.silent && console.log( `Slate env variables updated.` );
 }
 
-function createMasterThemeIfNeeded() {
-	return createThemeIfNotExists( 'master' );
+function createMasterThemeIfNeeded( command ) {
+	return createThemeIfNotExists( 'master', command );
 }
 
-function createDevThemeIfNeeded() {
-	return createThemeIfNotExists( 'dev' );
+function createDevThemeIfNeeded( command ) {
+	return createThemeIfNotExists( 'dev', command );
 }
 
-async function createThemeIfNotExists( themeName ) {
+async function createThemeIfNotExists( themeName, command ) {
+	!command.silent && console.log( `Creating theme ${ themeName.green }...` );
 	const getMatchingTheme = require( '../utils/get-matching-theme' );
 	let theme = await getMatchingTheme( themeName );
 	if ( theme ) {
+		!command.silent && console.log( `Skipped. Theme ${ themeName.green } already exists.` );
 		return theme;
 	}
 	const createTheme = require( '../utils/create-theme' );
-	return createTheme( themeName );
+	theme = await createTheme( themeName );
+	!command.silent && console.log( `Theme ${ themeName.green } created.` );
+	return theme;
 }
 
 async function createAndCheckoutDevBranch( command ) {
