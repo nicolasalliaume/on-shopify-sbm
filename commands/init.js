@@ -1,50 +1,59 @@
-const fs = require( 'fs' );
 const createGitBranch = require( '../utils/create-git-branch' );
+const stripCommandAuth = require( '../utils/strip-command-auth' );
+const createSBMEnv = require( '../utils/create-sbm-env' );
+const createSlateEnv = require( '../utils/create-slate-env' );
 
 module.exports = async function( command ) {
-	!command.silent && console.log( `Creating SBM env file for store...` );
-
-	const sbmEnvFileContent = getSbmEnvContent( command );
-	fs.writeFileSync( './.env.sbm', sbmEnvFileContent, 'utf8' );
-
-	!command.silent && console.log( `SBM env file created.` );
+	createAuthenticationFile( command );
 
 	// load new env variables
 	require( 'dotenv' ).config( { path: './.env.sbm' } );
+
+	const masterTheme = await createMasterThemeIfNeeded();
+	const devTheme = await createDevThemeIfNeeded();
+
+	createSlateEnvFile( command, devTheme.id );
+
+	checkoutDevBranch( command );
 	
-	const getMatchingTheme = require( '../utils/get-matching-theme' );
+	!command.silent && console.log( `✅  Shopify SBM initialized.`.green );
+}
 
-	let devTheme = await getMatchingTheme( 'dev' );
-	if ( devTheme ) {
-		!command.silent && console.log( `Theme ${ 'dev'.green } already exists on store.` );
-	}
-	else {
-		!command.silent && console.log( `Duplicating ${ 'master'.green } theme on shop...` );
 
-		const duplicateTheme = require( '../utils/duplicate-theme' );
+function createAuthenticationFile( command ) {
+	!command.silent && console.log( `Creating SBM env file for store...` );
+	createSBMEnv( stripCommandAuth( command ) );
+	!command.silent && console.log( `SBM env file created.` );
+}
 
-		const masterTheme = await getMatchingTheme( 'master' );
-		if ( ! masterTheme ) {
-			throw new Error( 
-				`No theme "master" was found in the store.`.red
-				+ `\n👉 A theme called "master" is needed to use as base theme `.blue
-				+ `when initializing Shopify SBM.`.blue 
-			);
-		}
 
-		devTheme = await duplicateTheme( masterTheme.id, 'dev' );
-		
-		!command.silent && console.log( `Theme ${ devTheme.name.green } created.` );
-	}
-
+function createSlateEnvFile( command, devThemeId ) {
 	!command.silent && console.log( `Updating Slate env variables...` );
-
-	const envContent = getEnvContent( command, devTheme );
-	fs.writeFileSync( './.env', envContent, 'utf8' );
-
+	const { domain, password } = stripCommandAuth( command );
+	createSlateEnv( domain, password, devThemeId );
 	!command.silent && console.log( `Slate env variables updated.` );
-	!command.silent && console.log( `Creating branch ${ 'dev'.green }...` );
+}
 
+function createMasterThemeIfNeeded() {
+	return createThemeIfNotExists( 'master' );
+}
+
+function createDevThemeIfNeeded() {
+	return createThemeIfNotExists( 'dev' );
+}
+
+async function createThemeIfNotExists( themeName ) {
+	const getMatchingTheme = require( '../utils/get-matching-theme' );
+	let theme = await getMatchingTheme( themeName );
+	if ( theme ) {
+		return theme;
+	}
+	const createTheme = require( '../utils/create-theme' );
+	return createTheme( themeName );
+}
+
+async function checkoutDevBranch( command ) {
+	!command.silent && console.log( `Creating branch ${ 'dev'.green }...` );
 	try {
 		await createGitBranch( 'dev' );
 		!command.silent && console.log( `Branch ${ 'dev'.green } created.` );
@@ -55,35 +64,4 @@ module.exports = async function( command ) {
 			+ `Dismiss this error if branch already exists.` 
 		);
 	}
-
-	!command.silent && console.log( `✅  Shopify SBM initialized.`.green );
-}
-
-
-function getSbmEnvContent( command ) {
-	const { domain, apiKey, password } = getAuthFromCommand( command );
-	return `DOMAIN=${ domain }\nKEY=${ apiKey }\nPASSWORD=${ password }\n`;
-}
-
-
-function getEnvContent( command, devTheme ) {
-	const { domain, apiKey, password } = getAuthFromCommand( command );
-	return `SLATE_STORE=${ domain }\n\nSLATE_PASSWORD=${ password }\n\n`
-		+ `SLATE_THEME_ID=${ devTheme.id }\n\nSLATE_IGNORE_FILES=config/settings_data.json`;
-}
-
-
-function getAuthFromCommand( command ) {
-	const domain = command.d || command.domain;
-	const apiKey = command.k || command.key || command.apiKey;
-	const password = command.p || command.password;
-
-	if ( !domain || !apiKey || !password ) {
-		throw new Error( 
-			`Missing authentication arguments.`.red 
-			+ `\n👉  Must include -d <domain> -k <key> -p <password>`.blue
-		);
-	}
-
-	return { domain, apiKey, password };
 }
