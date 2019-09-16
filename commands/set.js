@@ -33,7 +33,7 @@ module.exports = async function( command ) {
 		`🖌  Pointing to theme ${ theme.name.bold.green } (ID. ${ theme.id })...` 
 	);
 
-	replaceInFile( envPath, /SLATE_THEME_ID\s?=.*\s?\n?$/, `SLATE_THEME_ID=${ theme.id }\n` );
+	replaceInFile( envPath, /SLATE_THEME_ID=(.*)$/, `SLATE_THEME_ID=${ theme.id }\n` );
 
 	!command.silent && console.log( 
 		`✅  env file updated to point to theme ${ theme.name.bold } (ID. ${ theme.id })`.green );
