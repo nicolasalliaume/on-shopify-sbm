@@ -31,7 +31,7 @@
     "current-git-branch": "^1.1.0",
     "dotenv": "^8.1.0",
     "js-command-parser": "https://github.com/nicolasalliaume/js-command-parser",
-    "on-shopify-utils": "file:../on-shopify-utils",
+    "on-shopify-utils": "https://github.com/nicolasalliaume/on-shopify-utils",
     "simple-git": "^1.126.0"
   },
   "devDependencies": {
