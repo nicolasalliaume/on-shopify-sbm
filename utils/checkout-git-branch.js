@@ -1,10 +1,14 @@
-const runAsCommandLine = require( './run-as-command-line' );
+const git = require( 'simple-git' )( process.cwd() );
 
-module.exports = async ( name ) => {
-	try {
-		return await runAsCommandLine( 'git', [ 'checkout', name ] );
-	}
-	catch( e ) {
-		throw new Error( `Cannot checkout branch ${ name.green }: ${ e.message.red }` );
-	}
+module.exports = function( name ) {
+	return new Promise( ( resolve, reject ) => {
+		git.checkout( name, ( error ) => {
+			if ( error ) {
+				return reject( 
+					`Cannot checkout branch ${ name.green }: ${ error.message.red }` 
+				);
+			}
+			resolve();
+		} );
+	} )
 }

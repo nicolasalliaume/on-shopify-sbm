@@ -14,7 +14,7 @@ module.exports = async function( command ) {
 
 	createSlateEnvFile( command, devTheme.id );
 
-	checkoutDevBranch( command );
+	createAndCheckoutDevBranch( command );
 	
 	!command.silent && console.log( `✅  Shopify SBM initialized.`.green );
 }
@@ -52,7 +52,7 @@ async function createThemeIfNotExists( themeName ) {
 	return createTheme( themeName );
 }
 
-async function checkoutDevBranch( command ) {
+async function createAndCheckoutDevBranch( command ) {
 	!command.silent && console.log( `Creating branch ${ 'dev'.green }...` );
 	try {
 		await createGitBranch( 'dev' );
