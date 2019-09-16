@@ -22,7 +22,8 @@ module.exports = async function( command ) {
 
 function createAuthenticationFile( command ) {
 	!command.silent && console.log( `Creating SBM env file for store...` );
-	createSBMEnv( stripCommandAuth( command ) );
+	const { domain, apiKey, password } = stripCommandAuth( command )
+	createSBMEnv( domain, apiKey, password );
 	!command.silent && console.log( `SBM env file created.` );
 }
 
