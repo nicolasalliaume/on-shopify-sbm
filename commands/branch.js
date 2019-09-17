@@ -49,7 +49,7 @@ module.exports = async function( command ) {
 	!command.silent && console.log( 
 		`Run ${ `yarn start`.gray } to upload the theme to Shopify and start working.`.blue 
 	);
-	
+
 	!command.silent && console.log( `✅ Done` );
 }
 

@@ -1,11 +1,11 @@
 const ShopifyUtils = require( './get-shopify-utils' );
 
 module.exports = function( 
-	sourceId, 
-	targetId, 
+	sourceThemeId, 
+	targetThemeId, 
 	assets = [], 
 	silent = false, 
 	force = false 
 ) {
-	return ShopifyUtils.theme.sync( sourceId, targetId, assets, silent, force );
+	return ShopifyUtils.theme.sync( sourceThemeId, targetThemeId, assets, silent, force );
 }
