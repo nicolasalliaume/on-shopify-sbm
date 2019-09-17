@@ -16,7 +16,6 @@ module.exports = async function( name ) {
 					`Cannot create branch ${ name.green }: ${ error.message.red }` 
 				);
 			}
-			console.log( result );
 			resolve();
 		} );
 	} )
