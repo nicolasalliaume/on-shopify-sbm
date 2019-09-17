@@ -1,7 +1,13 @@
 const createGitBranch = require( '../utils/create-git-branch' );
+<<<<<<< Updated upstream
 const checkoutGitBranch = require( '../utils/checkout-git-branch' );
 const duplicateTheme = require( '../utils/duplicate-theme' );
 const getMatchingTheme = require( '../utils/get-matching-theme' );
+=======
+const createTheme = require( '../utils/create-theme' );
+const getMatchingTheme = require( '../utils/get-matching-theme' );
+const syncTheme = require( '../utils/sync-theme' );
+>>>>>>> Stashed changes
 
 module.exports = async function( command ) {
 	const branchName = command[ '__' ][ 1 ];
@@ -27,9 +33,29 @@ module.exports = async function( command ) {
 		+ `as a copy of ${ devTheme.name }...`
 	);
 
-	const newTheme = await duplicateTheme( devTheme.id, branchName );
-	
-	!command.silent && console.log( `✅  Theme ${ newTheme.name } created.`.green );
+	const devTheme = await getMatchingTheme( 'dev' );
+	if ( ! devTheme ) {
+		throw new Error( 
+			`There's no ${ 'dev'.bold } theme present in the store.`.red 
+			+ `\nA dev theme is needed as base theme.`
+		);
+	}
+
+	const newTheme = await createTheme( branchName );
+
+	!command.silent && console.log( `Theme ${ newTheme.name } created.`.green );
+	!command.silent && console.log( 
+		`Copying asset config/settings_data.json from theme ${ devTheme.name.bold } `
+		+ `to theme ${ newTheme.name.bold }...` 
+	);
+
+	await syncTheme( 
+		devTheme.id, 
+		newTheme.id, 
+		[ 'assets/settings_data.json' ], 
+		command.silent, 
+		command.y 
+	);
 
 	!command.silent && console.log(
 		`Creating git branch ${ branchName.bold.green }...`
