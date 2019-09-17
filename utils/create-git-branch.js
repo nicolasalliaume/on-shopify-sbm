@@ -10,7 +10,7 @@ module.exports = async function( name ) {
 	}
 
 	return new Promise( ( resolve, reject ) => {
-		git.checkoutBranch( name, 'master', ( error, result ) => {
+		git.checkoutBranch( name, 'dev', ( error, result ) => {
 			if ( error ) {
 				return reject( 
 					`Cannot create branch ${ name.green }.` 
