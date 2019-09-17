@@ -13,7 +13,7 @@ module.exports = async function( name ) {
 		git.checkoutBranch( name, 'master', ( error, result ) => {
 			if ( error ) {
 				return reject( 
-					`Cannot create branch ${ name.green }: ${ error.message.red }` 
+					`Cannot create branch ${ name.green }.` 
 				);
 			}
 			resolve();
