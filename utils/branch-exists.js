@@ -2,13 +2,13 @@ const git = require( 'simple-git' )( process.cwd() );
 
 module.exports = function( name ) {
 	return new Promise( ( resolve, reject ) => {
-		git.checkout( name, ( error ) => {
+		git.branch( ( error, result ) => {
 			if ( error ) {
 				return reject( 
-					`Cannot checkout branch ${ name.green }: ${ error.message.red }` 
+					`Error while checkint branch ${ name.green }: ${ error.message.red }` 
 				);
 			}
-			resolve();
-		} );
-	} )
+			return resolve( result.all.includes( name ) );
+		} )
+	} );
 }

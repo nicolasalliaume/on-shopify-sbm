@@ -22,6 +22,9 @@ module.exports = async function() {
 		case 'set-theme':
 			return require( './commands/set' )( command );
 
+		case 'init':
+			return require( './commands/init' )( command );
+
 		default: throw new Error( `Unknown command ${ action }`.red );
 
 	}

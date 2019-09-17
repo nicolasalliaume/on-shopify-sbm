@@ -1,10 +1,22 @@
-const runAsCommandLine = require( './run-as-command-line' );
+const git = require( 'simple-git' )( process.cwd() );
+const branchExists = require( './branch-exists' );
+const checkoutBranch = require( './checkout-git-branch' );
 
-module.exports = async ( name ) => {
-	try {
-		return await runAsCommandLine( 'git', [ 'checkout', '-b', name ] );
+module.exports = async function( name ) {
+	const exists = await branchExists( name );
+
+	if ( exists ) {
+		return checkoutBranch( name );
 	}
-	catch( e ) {
-		throw new Error( `Cannot create branch ${ name.green }: ${ e.message.red }` );
-	}
+
+	return new Promise( ( resolve, reject ) => {
+		git.checkoutBranch( name, 'dev', ( error, result ) => {
+			if ( error ) {
+				return reject( 
+					`Cannot create branch ${ name.green }.` 
+				);
+			}
+			resolve();
+		} );
+	} )
 }

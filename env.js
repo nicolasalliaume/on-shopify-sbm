@@ -1,12 +1,16 @@
 const dotenv = require( 'dotenv' );
 
-let env = dotenv.config( { path: './.env.cli' } );
+const filesToTry = [ './.env.sbm', './.env.cli', './.env' ];
 
-if ( env.error || !( 
-	env.parsed.DOMAIN && 
-	env.parsed.KEY &&
-	env.parsed.PASSWORD ) ) 
-{
-	env = dotenv.config();
+for ( var i = 0; i < filesToTry.length; i++ ) {
+	const file = filesToTry[ i ];
+	const env = dotenv.config( { path: file } );
+
+	if ( !env.error && 
+		env.parsed.DOMAIN && 
+		env.parsed.KEY &&
+		env.parsed.PASSWORD 
+	) {
+		break;
+	}
 }
-

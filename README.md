@@ -46,11 +46,32 @@ For example, if you're working on a branch called `feature/contact-page`, the to
 ...
 ```
 
+## Initializing a store
+
+Before you start, make sure you have your terminal open inside the Shopify project and that you have initialized a git repo with a master branch. If you haven't commited any code yet, go ahead and create an initial commit before moving on.
+
+Run `shopify-sbm init -d <domain> -k <key> -p <password>`, where
+-   domain is your shopify domain (*.myshopify.com)
+-   key is a private app key
+-   password is a private app password
+
+This will:
+-   create a master theme (empty) on Shopify if no theme called *master* exists already
+-   create a dev theme (also empty) on Shopify if no theme called *dev* exists already
+-   a file called `.env.sbm` with the domain, key and password used to authenticate when running the other SBM commands
+-   a git branch called `dev` if it doesn't exist already. This branch will be checked out by the command.
+
+If you don't know how to create a private app and get the key and password, see [here](https://github.com/nicolasalliaume/on-shopify-cli#create-a-private-app).
+
 ## Creating a new branch/theme
 
 Run `shopify-sbm branch <branch name>` to create a new git branch with the given name and also a new theme to track that branch.
 
 For example, if you're about to start working on a new feature called _"newsletter modal"_, run `shopify-sbm branch feature/newsletter-modal` to create a new branch from `dev`, and a new theme called `feature/newsletter-modal` as a duplicate of the _dev_ theme.
+
+## Cheatsheet
+
+For a good 'ol cheatsheet, see [ON Lab's Shopify Development Cheatsheet](https://onlab-tmp-bucket.s3-us-west-2.amazonaws.com/ON+Lab+-+Shopify+Development+Cheatsheet+.pdf).
 
 --------
 
