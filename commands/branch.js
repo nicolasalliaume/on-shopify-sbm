@@ -1,15 +1,10 @@
 const createGitBranch = require( '../utils/create-git-branch' );
-const checkoutGitBranch = require( '../utils/checkout-git-branch' );
 
 module.exports = async function( command ) {
 	const branchName = command[ '__' ][ 1 ];
 	if ( ! branchName ) {
 		throw new Error( `You must specify a branch name as first argument`.red );
 	}
-
-	!command.silent && console.log( `Checking out ${ 'dev'.green } branch...` );
-
-	await checkoutGitBranch( 'dev' );
 
 	!command.silent && console.log(
 		`Creating empty Shopify theme ${ branchName.bold.green }...`
