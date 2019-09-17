@@ -23,16 +23,18 @@ module.exports = async function( command ) {
 
 	const newTheme = await createTheme( branchName );
 
+	const assetsToCopy = [ 'config/settings_data.json' ];
+
 	!command.silent && console.log( `Theme ${ newTheme.name } created.`.green );
 	!command.silent && console.log( 
-		`Copying asset config/settings_data.json from theme ${ devTheme.name.bold } `
-		+ `to theme ${ newTheme.name.bold }...` 
+		`Copying assets from theme ${ devTheme.name.bold } to theme ${ newTheme.name.bold }...`
+		+ `\n\t* ` + assetsToCopy.join( '\n\t* ' )
 	);
 
 	await syncTheme( 
 		devTheme.id, 
 		newTheme.id, 
-		[ 'assets/settings_data.json' ], 
+		assetsToCopy, 
 		command.silent, 
 		command.y 
 	);
