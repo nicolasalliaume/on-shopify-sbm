@@ -1,13 +1,7 @@
 const createGitBranch = require( '../utils/create-git-branch' );
-<<<<<<< Updated upstream
-const checkoutGitBranch = require( '../utils/checkout-git-branch' );
-const duplicateTheme = require( '../utils/duplicate-theme' );
-const getMatchingTheme = require( '../utils/get-matching-theme' );
-=======
 const createTheme = require( '../utils/create-theme' );
 const getMatchingTheme = require( '../utils/get-matching-theme' );
 const syncTheme = require( '../utils/sync-theme' );
->>>>>>> Stashed changes
 
 module.exports = async function( command ) {
 	const branchName = command[ '__' ][ 1 ];
