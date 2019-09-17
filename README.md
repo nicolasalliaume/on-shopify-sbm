@@ -71,7 +71,7 @@ For example, if you're about to start working on a new feature called _"newslett
 
 ## Cheatsheet
 
-For a good'ol cheatsheet, see [ON Lab's Shopify Development Cheatsheet](https://onlab-tmp-bucket.s3-us-west-2.amazonaws.com/ON+Lab+-+Shopify+Development+Cheatsheet+.pdf).
+For a good 'ol cheatsheet, see [ON Lab's Shopify Development Cheatsheet](https://onlab-tmp-bucket.s3-us-west-2.amazonaws.com/ON+Lab+-+Shopify+Development+Cheatsheet+.pdf).
 
 --------
 
