@@ -1,4 +1,5 @@
 const createGitBranch = require( '../utils/create-git-branch' );
+const createTheme = require( '../utils/create-theme' );
 
 module.exports = async function( command ) {
 	const branchName = command[ '__' ][ 1 ];
@@ -9,6 +10,8 @@ module.exports = async function( command ) {
 	!command.silent && console.log(
 		`Creating empty Shopify theme ${ branchName.bold.green }...`
 	);
+
+	const newTheme = await createTheme( branchName );
 
 	!command.silent && console.log( `Theme ${ newTheme.name } created.`.green );
 

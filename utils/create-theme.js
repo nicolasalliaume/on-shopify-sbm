@@ -1,5 +1,5 @@
 const ShopifyUtils = require( './get-shopify-utils' );
 
-module.exports = function( name, path ) {
-	return ShopifyUtils.theme.create( name, path );
+module.exports = function( name ) {
+	return ShopifyUtils.theme.create( name );
 }
