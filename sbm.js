@@ -25,6 +25,9 @@ module.exports = async function() {
 		case 'init':
 			return require( './commands/init' )( command );
 
+		case 'publish':
+			return require( './commands/publish' )( command );
+
 		default: throw new Error( `Unknown command ${ action }`.red );
 
 	}

@@ -45,7 +45,7 @@ function createDevThemeIfNeeded( command ) {
 
 async function createThemeIfNotExists( themeName, command ) {
 	!command.silent && console.log( `Creating theme ${ themeName.green }...` );
-	const getMatchingTheme = require( '../utils/get-matching-theme' );
+	const getMatchingTheme = require( '../utils/get-theme-by-name' );
 	let theme = await getMatchingTheme( themeName );
 	if ( theme ) {
 		!command.silent && console.log( `Skipped. Theme ${ themeName.green } already exists.` );

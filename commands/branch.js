@@ -1,6 +1,6 @@
 const createGitBranch = require( '../utils/create-git-branch' );
 const createTheme = require( '../utils/create-theme' );
-const getMatchingTheme = require( '../utils/get-matching-theme' );
+const getMatchingTheme = require( '../utils/get-theme-by-name' );
 const syncTheme = require( '../utils/sync-theme' );
 const promptUser = require( 'command-prompt-user' );
 

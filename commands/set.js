@@ -1,7 +1,7 @@
 const fs = require( 'fs' );
 const { join } = require( 'path' );
 const currentGitBranch = require( 'current-git-branch' );
-const getMatchingTheme = require( '../utils/get-matching-theme' );
+const getMatchingTheme = require( '../utils/get-theme-by-name' );
 const readEnvFile = require( '../utils/read-env-file' );
 const replaceInFile = require( '../utils/replace-in-file' );
 
