@@ -1,5 +1,6 @@
 const getMatchingTheme = require( '../utils/get-theme-by-name' );
 const promptUser = require( 'command-prompt-user' );
+const selectTheme = require( '../utils/select-theme' );
 
 module.exports = class Command {
 
@@ -12,8 +13,8 @@ module.exports = class Command {
 		throw new Error( `Must implement execute() method` );
 	}
 
-	getArgument( position ) {
-		return this.command[ '__' ][ position ];
+	getArgument( position, name ) {
+		return this.command[ '__' ][ position ] || this.command[ name ];
 	}
 
 	getArgumentOrThrow( argumentPosition, errorMessage ) {
@@ -39,5 +40,13 @@ module.exports = class Command {
 		if ( shouldContinue.toLowerCase() !== 'y' ) {
 			throw new Error( throwMessage || `Cancelled by user.` );
 		}
+	}
+
+	async selectThemeOrThrow( promptMessage, errorMessage ) {
+		const themeName = await selectTheme( promptMessage || 'Select a theme' );
+		if ( ! themeName ) {
+			throw new Error( errorMessage || 'You must select a theme.' );
+		}
+		return themeName;
 	}
 }
