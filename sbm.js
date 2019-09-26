@@ -9,26 +9,48 @@ module.exports = async function() {
 		throw new Error( `Command not specified`.red );
 	}
 
+	const reporter = buildReporter( command );
 	const action = command[ '__' ][ 0 ].toLowerCase();
+
+	let Command;
 
 	switch ( action ) {
 
 		case 'branch':
-		case 'flow': 
-			return require( './commands/branch' )( command );
+		case 'flow': { 
+			Command = require( './commands/branch' );
+			break;
+		}
 
 		case 'set': 
 		case 'set-branch':
-		case 'set-theme':
-			return require( './commands/set' )( command );
+		case 'set-theme': {
+			Command = require( './commands/set' );
+			break;
+		}
 
-		case 'init':
-			return require( './commands/init' )( command );
+		case 'init': {
+			Command = require( './commands/init' );
+			break;
+		}
 
-		case 'publish':
-			return require( './commands/publish' )( command );
+		case 'publish': {
+			Command = require( './commands/publish' );
+			break;
+		}
 
 		default: throw new Error( `Unknown command ${ action }`.red );
-
 	}
+
+	return new Command( command, reporter ).execute();
+}
+
+
+const buildReporter = command => {
+	let Reporter;
+	if ( command.silent ) {
+		Reporter = require( './utils/reporter' );
+	}
+	Reporter = require( './utils/console-reporter' );
+	return new Reporter();
 }

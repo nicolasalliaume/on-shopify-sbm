@@ -3,62 +3,75 @@ const createTheme = require( '../utils/create-theme' );
 const getMatchingTheme = require( '../utils/get-theme-by-name' );
 const syncTheme = require( '../utils/sync-theme' );
 const promptUser = require( 'command-prompt-user' );
+const Command = require( './command' );
 
-module.exports = async function( command ) {
-	const branchName = command[ '__' ][ 1 ];
-	if ( ! branchName ) {
-		throw new Error( `You must specify a branch name as first argument`.red );
+class BranchCommand extends Command {
+
+	async execute() {
+		this.branchName = this.getBranchOrThrow();
+		this.reporter.info( `Creating empty Shopify theme ${ this.branchName.bold.green }...` );
+		this.devTheme = await this.getThemeOrThrow( 'dev' );
+		this.newTheme = await this.getNewThemeOrThrow( this.branchName, this.command.y );
+		await this.copyAssets( this.devTheme, this.newTheme );
+		await this.createBranch( this.branchName );
+		this.reporter.info( `Run ${ `yarn start`.gray } to upload the theme to Shopify and start working.`.blue );
+		this.reporter.info( `✅ Done` );	
 	}
 
-	!command.silent && console.log(
-		`Creating empty Shopify theme ${ branchName.bold.green }...`
-	);
 
-	const devTheme = await getThemeOrThrow( 'dev' );
+	getBranchOrThrow() {
+		return this.getArgumentOrThrow( 
+			BranchCommand.ARGUMENTS.BRANCH, 
+			`You must specify a branch name as first argument`.red
+		)
+	}
 
-	let newTheme = await getMatchingTheme( branchName );
-	if ( newTheme || !command.y ) {
-		const shouldContinue = promptUser( `Theme ${ newTheme.name.bold } already exists. Continue anyway?` );
-		if ( shouldContinue.toLowerCase() !== 'y' ) {
-			throw new Error( `Cancelled by user.` );
+
+	async getNewThemeOrThrow( themeName, continueIfExists = false ) {
+		let theme = await getMatchingTheme( themeName );
+		if ( theme && !continueIfExists ) {
+			this.continueOrThrow( `Theme ${ theme.name.blue.bold } already exists. Continue anyway?` );
+			this.reporter.info( 'Continuing...' );
 		}
-		!command.silent && console.log( `Continuing...` );
+		else {
+			theme = await createTheme( themeName );
+			this.reporter.info( `Theme ${ theme.name.bold } created.`.green );
+		}
+		return theme;
 	}
-	else {
-		newTheme = await createTheme( branchName );
-		!command.silent && console.log( `Theme ${ newTheme.name.bold } created.`.green );
+
+
+	async copyAssets( sourceTheme, targetTheme ) {
+		const assetsToCopy = [ 'config/settings_data.json' ];
+		
+		this.reporter.info( 
+			`Copying assets from theme ${ sourceTheme.name.blue.bold } `
+			+ `to theme ${ targetTheme.name.blue.bold }...`
+			+ `\n\t* ` + assetsToCopy.join( '\n\t* ' ) 
+		);
+
+		return syncTheme( 
+			sourceTheme.id, 
+			targetTheme.id, 
+			assetsToCopy, 
+			this.command.silent, 
+			this.command.y 
+		);
 	}
 
-	const assetsToCopy = [ 'config/settings_data.json' ];
 
-	!command.silent && console.log( 
-		`Copying assets from theme ${ devTheme.name.bold } to theme ${ newTheme.name.bold }...`
-		+ `\n\t* ` + assetsToCopy.join( '\n\t* ' )
-	);
+	async createBranch( branchName ) {
+		this.reporter.info( `Creating git branch ${ branchName.bold.green }...` );
+		await createGitBranch( branchName, 'dev' );
+		this.reporter.info( `Created git branch ${ branchName.bold }`.green );
+	}
 
-	await syncTheme( devTheme.id, newTheme.id, assetsToCopy, command.silent, command.y );
+}
 
-	!command.silent && console.log(
-		`Creating git branch ${ branchName.bold.green }...`
-	);
-
-	await createGitBranch( branchName, 'dev' );
-
-	!command.silent && console.log( `Created git branch ${ branchName.bold }`.green );
-
-	!command.silent && console.log( 
-		`Run ${ `yarn start`.gray } to upload the theme to Shopify and start working.`.blue 
-	);
-
-	!command.silent && console.log( `✅ Done` );
+BranchCommand.ARGUMENTS = {
+	BRANCH: 1,
 }
 
 
-async function getThemeOrThrow( name ) {
-	const devTheme = await getMatchingTheme( name );
-	if ( ! devTheme ) {
-		throw new Error( `There's no ${ name.bold } theme present in the store.`.red );
-	}
-	return devTheme;
-}
+module.exports = BranchCommand;
 
