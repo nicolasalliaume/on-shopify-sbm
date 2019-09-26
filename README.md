@@ -69,7 +69,15 @@ Run `shopify-sbm branch <branch name>` to create a new git branch with the given
 
 For example, if you're about to start working on a new feature called _"newsletter modal"_, run `shopify-sbm branch feature/newsletter-modal` to create a new branch from `dev`, and a new theme called `feature/newsletter-modal` as a duplicate of the _dev_ theme.
 
-## Cheatsheet
+## Publish
+
+Run `shopify-sbm publish [<theme to publish>] [--as <name>]` to release a deployed theme with another name.
+
+For example, if you wish to release the **dev** theme as a _**Release Candidate**_ theme, use `shopify-sbm publish dev --as "Release Candidate"`. This will copy the _dev_ theme into a new one (or an existing one) called _Release Candidate_. 
+
+This command will also ask you if you wish to copy settings_data.json from _another_ theme. For example, you might choose to copy the settings from the _master_ theme.
+
+# Cheatsheet
 
 For a good 'ol cheatsheet, see [ON Lab's Shopify Development Cheatsheet](https://onlab-tmp-bucket.s3-us-west-2.amazonaws.com/ON+Lab+-+Shopify+Development+Cheatsheet+.pdf).
 
