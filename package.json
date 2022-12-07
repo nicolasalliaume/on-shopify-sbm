@@ -33,7 +33,7 @@
     "dotenv": "^8.1.0",
     "js-command-parser": "https://github.com/nicolasalliaume/js-command-parser",
     "on-shopify-utils": "https://github.com/nicolasalliaume/on-shopify-utils",
-    "simple-git": "^1.126.0"
+    "simple-git": "^3.15.0"
   },
   "devDependencies": {
     "mocha": "^6.2.0"
